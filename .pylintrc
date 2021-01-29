@@ -1,0 +1,5 @@
+[BASIC]
+good-names=b,e,ic
+
+[MESSAGES CONTROL]
+disable=missing-docstring,too-few-public-methods
