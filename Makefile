@@ -18,6 +18,13 @@
 default:
 	false
 
+prep:
+	$(MAKE) format
+	$(MAKE) unittests-coverage
+
+format:
+	black .
+
 lint:
 	pylint3 awsrev revizor.py
 
