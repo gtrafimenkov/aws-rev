@@ -23,10 +23,10 @@ prep:
 	$(MAKE) unittests-coverage
 
 format:
-	black .
+	python -m black .
 
 lint:
-	pylint3 awsrev revizor.py
+	python -m pylint awsrev revizor.py
 
 unittests:
 	python -m unittest
