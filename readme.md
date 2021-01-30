@@ -4,6 +4,8 @@ Tool for checking AWS resources for security compliance.
 
 Implemented checks:
 
+- KSM
+  - rotation is enabled for user managed customer master keys (CMK)
 - S3
   - bucket encryption is enabled
   - bucket versioning is enabled

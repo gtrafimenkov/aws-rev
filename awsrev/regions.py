@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 ###############################################################################
 # Copyright (c) 2021 Gennady Trafimenkov
 #
@@ -17,36 +15,8 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 ###############################################################################
 
-import sys
-import logging
 
-import boto3
-
-import awsrev
-import awsrev.kms
-
-
-def main():
-    logging.basicConfig(
-        format="%(asctime)s %(levelname)-10s %(message)s", level=logging.INFO
-    )
-    s3_client = boto3.client("s3")
-    ec2_client = boto3.client("ec2")
-    regions = awsrev.get_enabled_regions(ec2_client)
-
-    ic = awsrev.IssuesCollector()
-
-    awsrev.kms.check_cmk(regions, ic)
-
-    awsrev.check_s3_buckets(s3_client, ic)
-    if ic.issues:
-        print(f"Issues found: {len(ic.issues)}", file=sys.stderr)
-        for error in ic.issues:
-            print(f"- {error}", file=sys.stderr)
-        sys.exit(10)
-    else:
-        sys.exit(0)
-
-
-if __name__ == "__main__":
-    main()
+def get_enabled_regions(ec2_client):
+    """Get list of AWS regions enabled for the account."""
+    response = ec2_client.describe_regions()
+    return sorted([x["RegionName"] for x in response["Regions"]])
