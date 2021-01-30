@@ -15,28 +15,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 ###############################################################################
 
-default:
-	false
-
-prep:
-	$(MAKE) format
-	$(MAKE) unittests-coverage
-
-format:
-	python -m black .
-	terraform fmt extras/terraform/ro-iam-policy
-
-lint:
-	python -m pylint awsrev revizor.py
-
-unittests:
-	python -m unittest
-
-unittests-coverage:
-	-coverage run -m unittest
-	coverage report -m
-	coverage html
-	@echo
-	@echo "------------------------------------------------------------------------------"
-	@echo "html report: file://$$(pwd)/htmlcov/index.html"
-	@echo "------------------------------------------------------------------------------"
+output "arn" {
+  description = "Policy ARN"
+  value       = aws_iam_policy.aws-rev-ro.arn
+}
