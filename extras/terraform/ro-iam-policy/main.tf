@@ -15,28 +15,27 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 ###############################################################################
 
-default:
-	false
+resource "aws_iam_policy" "aws-rev-ro" {
+  name        = "aws-rev-ro"
+  path        = "/"
+  description = "Read only access for AWS Revizor"
 
-prep:
-	$(MAKE) format
-	$(MAKE) unittests-coverage
-
-format:
-	python -m black .
-	terraform fmt extras/terraform/ro-iam-policy
-
-lint:
-	python -m pylint awsrev revizor.py
-
-unittests:
-	python -m unittest
-
-unittests-coverage:
-	-coverage run -m unittest
-	coverage report -m
-	coverage html
-	@echo
-	@echo "------------------------------------------------------------------------------"
-	@echo "html report: file://$$(pwd)/htmlcov/index.html"
-	@echo "------------------------------------------------------------------------------"
+  policy = <<POLICY
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "S3Access",
+            "Effect": "Allow",
+            "Action": [
+                "s3:GetBucketPolicy",
+                "s3:GetBucketVersioning",
+                "s3:GetEncryptionConfiguration",
+                "s3:ListAllMyBuckets"
+            ],
+            "Resource": "*"
+        }
+    ]
+}
+POLICY
+}
