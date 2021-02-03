@@ -15,6 +15,8 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 ###############################################################################
 
-from awsrev.regions import get_enabled_regions
-from awsrev.results import IssuesCollector
-from awsrev.s3_checks import check_s3_buckets
+
+def get_enabled_regions(ec2_client):
+    """Get list of AWS regions enabled for the account."""
+    response = ec2_client.describe_regions()
+    return sorted([x["RegionName"] for x in response["Regions"]])
