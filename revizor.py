@@ -31,6 +31,11 @@ def main():
 
     parser = argparse.ArgumentParser(description="AWS Revizor")
     parser.add_argument("--verbose", action="store_true")
+    parser.add_argument(
+        "--regions",
+        help="Comma separated list of AWS regions to check. "
+        "Checking all regions by default.",
+    )
 
     args = parser.parse_args()
 
@@ -41,6 +46,9 @@ def main():
     s3_client = boto3.client("s3")
     ec2_client = boto3.client("ec2")
     regions = awsrev.get_enabled_regions(ec2_client)
+    if args.regions is not None:
+        only_regions = [x.strip() for x in args.regions.split(",")]
+        regions = sorted(list(set(regions) & set(only_regions)))
 
     ic = awsrev.IssuesCollector()
 

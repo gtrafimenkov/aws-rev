@@ -19,6 +19,14 @@ export AWS_PROFILE=xxx
 ./revizor.py
 ```
 
+It is possible to limit checks to one or more regions:
+
+```
+./revizor.py --regions us-west-1,eu-west-1
+```
+
+Global resources are always checked.
+
 The application doesn't create any AWS resources and uses
 only read-only API calls.  Minimal IAM policy can be found in
 [extras/terraform/ro-iam-policy/](./extras/terraform/ro-iam-policy/).
