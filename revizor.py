@@ -17,8 +17,9 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 ###############################################################################
 
-import sys
+import argparse
 import logging
+import sys
 
 import boto3
 
@@ -27,8 +28,15 @@ import awsrev.kms
 
 
 def main():
+
+    parser = argparse.ArgumentParser(description="AWS Revizor")
+    parser.add_argument("--verbose", action="store_true")
+
+    args = parser.parse_args()
+
     logging.basicConfig(
-        format="%(asctime)s %(levelname)-10s %(message)s", level=logging.INFO
+        format="%(asctime)s %(levelname)-10s %(message)s",
+        level=logging.INFO if args.verbose else logging.WARNING,
     )
     s3_client = boto3.client("s3")
     ec2_client = boto3.client("ec2")
@@ -40,9 +48,9 @@ def main():
 
     awsrev.check_s3_buckets(s3_client, ic)
     if ic.issues:
-        print(f"Issues found: {len(ic.issues)}", file=sys.stderr)
+        print(f"Issues found: {len(ic.issues)}")
         for error in ic.issues:
-            print(f"- {error}", file=sys.stderr)
+            print(f"- {error}")
         sys.exit(10)
     else:
         sys.exit(0)
