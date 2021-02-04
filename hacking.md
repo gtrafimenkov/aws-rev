@@ -11,7 +11,5 @@ pip install -r requirements-dev.txt
 ## Before publish checklist
 
 ```
-make format
-make lint
-make unittests
+make check
 ```

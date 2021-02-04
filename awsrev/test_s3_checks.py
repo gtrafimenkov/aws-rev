@@ -17,17 +17,54 @@
 
 import unittest
 
-import awsrev.s3_checks
+from awsrev import s3_checks
+
+
+class SSERecommendedConfigTest(unittest.TestCase):
+    def test_few_cases(self):
+        cases = [
+            (
+                {
+                    "Rules": [
+                        {
+                            "ApplyServerSideEncryptionByDefault": {
+                                "SSEAlgorithm": "aws:kms",
+                                "KMSMasterKeyID": "42ebfeb5-be96-4456-b794-123456789012",
+                            },
+                            "BucketKeyEnabled": False,
+                        }
+                    ]
+                },
+                True,
+            ),
+            (
+                {
+                    "Rules": [
+                        {
+                            "ApplyServerSideEncryptionByDefault": {
+                                "SSEAlgorithm": "AES256"
+                            },
+                            "BucketKeyEnabled": False,
+                        }
+                    ]
+                },
+                True,
+            ),
+        ]
+
+        for num, case in enumerate(cases):
+            config, expected_result = case
+            self.assertEqual(
+                s3_checks.is_recommended_sse_configuration(config),
+                expected_result,
+                msg=f"case {num}",
+            )
 
 
 class InsecureTransportPolicyTests(unittest.TestCase):
     def test_no_policy(self):
-        self.assertFalse(
-            awsrev.s3_checks.does_policy_disallow_insecure_transport("foo", None)
-        )
-        self.assertFalse(
-            awsrev.s3_checks.does_policy_disallow_insecure_transport("foo", {})
-        )
+        self.assertFalse(s3_checks.does_policy_disallow_insecure_transport("foo", None))
+        self.assertFalse(s3_checks.does_policy_disallow_insecure_transport("foo", {}))
 
     def test_correct_disallow_policy(self):
         policy = {
@@ -48,9 +85,7 @@ class InsecureTransportPolicyTests(unittest.TestCase):
             ],
         }
         self.assertTrue(
-            awsrev.s3_checks.does_policy_disallow_insecure_transport(
-                "test-bucket-2", policy
-            )
+            s3_checks.does_policy_disallow_insecure_transport("test-bucket-2", policy)
         )
 
     def test_misconfigured_disallow_policy(self):
@@ -72,7 +107,5 @@ class InsecureTransportPolicyTests(unittest.TestCase):
             ],
         }
         self.assertFalse(
-            awsrev.s3_checks.does_policy_disallow_insecure_transport(
-                "test-bucket-2", policy
-            )
+            s3_checks.does_policy_disallow_insecure_transport("test-bucket-2", policy)
         )

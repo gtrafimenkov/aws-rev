@@ -35,13 +35,27 @@ def check_s3_buckets(s3_client, ic: IssuesCollector):
 def check_bucket_sse(s3_client, bucket_name, ic: IssuesCollector):
     """Check that the bucket has server-side encryption enabled."""
     try:
-        s3_client.get_bucket_encryption(Bucket=bucket_name)
+        resp = s3_client.get_bucket_encryption(Bucket=bucket_name)
+        if not is_recommended_sse_configuration(
+            resp["ServerSideEncryptionConfiguration"]
+        ):
+            ic.add(f"not recommended SSE encryption for S3 bucket {bucket_name}")
     except botocore.exceptions.ClientError as e:
         if "ServerSideEncryptionConfigurationNotFoundError" in str(e):
             ic.add(f"S3 bucket {bucket_name}: no server-side encryption")
         else:
             logging.error("Unexpected error during S3 buckets check: %s", str(e))
             raise e
+
+
+def is_recommended_sse_configuration(config) -> bool:
+    """Check is server side encryption configuration for recommended
+    values."""
+    try:
+        alg = config["Rules"][0]["ApplyServerSideEncryptionByDefault"]["SSEAlgorithm"]
+        return alg in ["aws:kms", "AES256"]
+    except KeyError:
+        return False
 
 
 def check_bucket_versioning(s3_client, bucket_name, ic: IssuesCollector):

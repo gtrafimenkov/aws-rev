@@ -40,3 +40,8 @@ unittests-coverage:
 	@echo "------------------------------------------------------------------------------"
 	@echo "html report: file://$$(pwd)/htmlcov/index.html"
 	@echo "------------------------------------------------------------------------------"
+
+check:
+	$(MAKE) format
+	$(MAKE) lint
+	$(MAKE) unittests
