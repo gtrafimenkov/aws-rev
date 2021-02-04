@@ -35,7 +35,7 @@ def check_cmk(aws_regions, ic: IssuesCollector):
         for key in keys:
             if is_customer_managed_key(client, key.id):
                 if not is_key_rotation_enabled(client, key.id):
-                    ic.add(f"key rotation is not enabled for {key.arn}")
+                    ic.add(f"key rotation is not enabled for KMS CMK {key.arn}")
 
 
 def is_customer_managed_key(client, key_id) -> bool:

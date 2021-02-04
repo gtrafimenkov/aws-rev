@@ -55,9 +55,10 @@ def main():
     awsrev.kms.check_cmk(regions, ic)
 
     awsrev.check_s3_buckets(s3_client, ic)
+
     if ic.issues:
         print(f"Issues found: {len(ic.issues)}")
-        for error in ic.issues:
+        for error in sorted(ic.issues):
             print(f"- {error}")
         sys.exit(10)
     else:
