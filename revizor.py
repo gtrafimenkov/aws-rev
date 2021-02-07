@@ -25,6 +25,7 @@ import boto3
 
 import awsrev
 import awsrev.kms
+import awsrev.iam
 
 
 def main():
@@ -52,8 +53,8 @@ def main():
 
     ic = awsrev.IssuesCollector()
 
+    awsrev.iam.check_iam(ic)
     awsrev.kms.check_cmk(regions, ic)
-
     awsrev.check_s3_buckets(s3_client, ic)
 
     if ic.issues:
