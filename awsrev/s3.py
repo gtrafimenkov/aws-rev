@@ -19,7 +19,6 @@ import logging
 import json
 
 import boto3
-import botocore
 
 from awsrev.results import IssuesCollector
 
@@ -42,7 +41,7 @@ def check_bucket_sse(client, bucket_name, ic: IssuesCollector):
             resp["ServerSideEncryptionConfiguration"]
         ):
             ic.add(f"not recommended SSE encryption for S3 bucket {bucket_name}")
-    except botocore.exceptions.ClientError as e:
+    except client.exceptions.ClientError as e:
         if "ServerSideEncryptionConfigurationNotFoundError" in str(e):
             ic.add(f"no server-side encryption for S3 bucket {bucket_name}")
         else:
@@ -79,7 +78,7 @@ def get_bucket_policy(client, bucket_name) -> dict:
     try:
         resp = client.get_bucket_policy(Bucket=bucket_name)
         return json.loads(resp["Policy"])
-    except botocore.exceptions.ClientError as e:
+    except client.exceptions.ClientError as e:
         if "NoSuchBucketPolicy" in str(e):
             return None
         logging.error("Unexpected error when getting S3 bucket policy: %s", str(e))
