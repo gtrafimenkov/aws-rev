@@ -47,7 +47,10 @@ resource "aws_iam_policy" "aws-rev-ro" {
             "Sid": "IAMAccess",
             "Effect": "Allow",
             "Action": [
-                "iam:GetAccountSummary"
+                "iam:GetAccountSummary",
+                "iam:GetLoginProfile",
+                "iam:ListMFADevices",
+                "iam:ListUsers"
             ],
             "Resource": "*"
         },

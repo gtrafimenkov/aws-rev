@@ -6,3 +6,6 @@ disable=
     bad-continuation,
     missing-docstring,
     too-few-public-methods,
+
+[SIMILARITIES]
+ignore-imports=yes

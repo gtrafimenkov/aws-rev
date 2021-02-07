@@ -6,6 +6,7 @@ Implemented checks:
 
 - IAM
   - MFA for the root user is enabled
+  - MFA is enabled for users which can login to AWS console
 - KSM
   - rotation is enabled for user managed customer master keys (CMK)
 - S3
