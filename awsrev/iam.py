@@ -39,7 +39,7 @@ def check_iam(ic: IssuesCollector):
         if login_profile:
             # the user has a console password
             # checking that he/she has an MFA device enabled
-            if not does_user_has_mfa(client, user.name):
+            if not does_user_have_mfa(client, user.name):
                 ic.add(f"MFA is not enabled for user {user.arn}")
 
 
@@ -71,7 +71,7 @@ def get_user_login_profile(client, user_name):
         return None
 
 
-def does_user_has_mfa(client, user_name) -> bool:
+def does_user_have_mfa(client, user_name) -> bool:
     """Check if the user has an MFA device enabled."""
     # If list_mfa_devices returns anything, then the user has enabled MFA.
     return len(get_user_mfa_devices(client, user_name)) > 0
@@ -79,7 +79,6 @@ def does_user_has_mfa(client, user_name) -> bool:
 
 def get_user_mfa_devices(client, user_name):
     """Get list of MFA devices of the given user.  There might be maximum of 1 device."""
-    resp = client.list_mfa_devices
     devices = []
     args = {}
     while True:
