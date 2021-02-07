@@ -34,6 +34,32 @@ resource "aws_iam_policy" "aws-rev-ro" {
                 "s3:ListAllMyBuckets"
             ],
             "Resource": "*"
+        },
+        {
+            "Sid": "EC2Access",
+            "Effect": "Allow",
+            "Action": [
+                "ec2:DescribeRegions"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "IAMAccess",
+            "Effect": "Allow",
+            "Action": [
+                "iam:GetAccountSummary"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "KMSAccess",
+            "Effect": "Allow",
+            "Action": [
+                "kms:DescribeKey",
+                "kms:GetKeyRotationStatus",
+                "kms:ListKeys"
+            ],
+            "Resource": "*"
         }
     ]
 }

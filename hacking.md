@@ -8,8 +8,9 @@ python3 -m venv venv-dev
 pip install -r requirements-dev.txt
 ```
 
-## Before publish checklist
+## Before pushing changes or making a pull request
 
-```
-make check
-```
+- perform `make check`
+- if you added new or modified existing checks, make sure that
+  the [minimal IAM policy](./extras/terraform/ro-iam-policy)
+  is up to date
