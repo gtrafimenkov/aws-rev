@@ -26,6 +26,7 @@ import boto3
 import awsrev
 import awsrev.iam
 import awsrev.kms
+import awsrev.logging
 import awsrev.regions
 import awsrev.results
 import awsrev.s3
@@ -33,7 +34,7 @@ import awsrev.s3
 
 def main():
 
-    check_groups = sorted(["iam", "kms", "s3"])
+    check_groups = sorted(["iam", "kms", "logging", "s3"])
 
     parser = argparse.ArgumentParser(description="AWS Revizor")
     parser.add_argument("--verbose", action="store_true")
@@ -78,6 +79,7 @@ def main():
     checks = [
         ("iam", lambda: awsrev.iam.check_iam(ic)),
         ("kms", lambda: awsrev.kms.check_cmk(regions, ic)),
+        ("logging", lambda: awsrev.logging.check_logging(ic)),
         ("s3", lambda: awsrev.s3.check_buckets(ic)),
     ]
 

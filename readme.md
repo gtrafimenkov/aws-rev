@@ -9,6 +9,8 @@ Implemented checks:
   - MFA is enabled for users which can login to AWS console
 - KSM
   - rotation is enabled for user managed customer master keys (CMK)
+- logging
+  - multi-region CloudTrail is configured to log all management events
 - S3
   - bucket encryption is enabled
   - bucket versioning is enabled

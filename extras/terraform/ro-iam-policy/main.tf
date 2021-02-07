@@ -63,6 +63,16 @@ resource "aws_iam_policy" "aws-rev-ro" {
                 "kms:ListKeys"
             ],
             "Resource": "*"
+        },
+        {
+            "Sid": "CloudTrailAccess",
+            "Effect": "Allow",
+            "Action": [
+                "cloudtrail:DescribeTrails",
+                "cloudtrail:GetEventSelectors",
+                "cloudtrail:GetTrailStatus"
+            ],
+            "Resource": "*"
         }
     ]
 }

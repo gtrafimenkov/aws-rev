@@ -15,33 +15,21 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 ###############################################################################
 
-default:
-	false
+import unittest
 
-prep:
-	$(MAKE) format
-	$(MAKE) unittests-coverage
+import awsrev.logging
 
-format:
-	python -m black .
-	terraform fmt extras/terraform/ro-iam-policy
 
-lint:
-	python -m pylint awsrev revizor.py
-
-unittests:
-	python -m unittest
-
-unittests-coverage:
-	-coverage run -m unittest
-	coverage report -m --include=awsrev/*,revizor.py
-	coverage html --include=awsrev/*,revizor.py
-	@echo
-	@echo "------------------------------------------------------------------------------"
-	@echo "html report: file://$$(pwd)/htmlcov/index.html"
-	@echo "------------------------------------------------------------------------------"
-
-check:
-	$(MAKE) format
-	$(MAKE) lint
-	$(MAKE) unittests
+class TestCloudTrailSelectors(unittest.TestCase):
+    def test_basic_correct_selectors(self):
+        selectors = [
+            {
+                "ReadWriteType": "All",
+                "IncludeManagementEvents": True,
+                "DataResources": [],
+                "ExcludeManagementEventSources": [],
+            }
+        ]
+        self.assertTrue(
+            awsrev.logging.check_selectors_for_all_management_events(selectors)
+        )
