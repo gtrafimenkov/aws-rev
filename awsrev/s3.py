@@ -18,24 +18,26 @@
 import logging
 import json
 
+import boto3
 import botocore
 
 from awsrev.results import IssuesCollector
 
 
-def check_s3_buckets(s3_client, ic: IssuesCollector):
-    resp = s3_client.list_buckets()
+def check_buckets(ic: IssuesCollector):
+    client = boto3.client("s3")
+    resp = client.list_buckets()
     buckets = [x["Name"] for x in resp["Buckets"]]
     for b in buckets:
-        check_bucket_sse(s3_client, b, ic)
-        check_bucket_versioning(s3_client, b, ic)
-        check_for_insecure_transport(s3_client, b, ic)
+        check_bucket_sse(client, b, ic)
+        check_bucket_versioning(client, b, ic)
+        check_for_insecure_transport(client, b, ic)
 
 
-def check_bucket_sse(s3_client, bucket_name, ic: IssuesCollector):
+def check_bucket_sse(client, bucket_name, ic: IssuesCollector):
     """Check that the bucket has server-side encryption enabled."""
     try:
-        resp = s3_client.get_bucket_encryption(Bucket=bucket_name)
+        resp = client.get_bucket_encryption(Bucket=bucket_name)
         if not is_recommended_sse_configuration(
             resp["ServerSideEncryptionConfiguration"]
         ):
@@ -58,24 +60,24 @@ def is_recommended_sse_configuration(config) -> bool:
         return False
 
 
-def check_bucket_versioning(s3_client, bucket_name, ic: IssuesCollector):
+def check_bucket_versioning(client, bucket_name, ic: IssuesCollector):
     """Check that the bucket has versioning enabled."""
-    resp = s3_client.get_bucket_versioning(Bucket=bucket_name)
+    resp = client.get_bucket_versioning(Bucket=bucket_name)
     if resp.get("Status", "") != "Enabled":
         ic.add(f"no versioning on S3 bucket {bucket_name}")
 
 
-def check_for_insecure_transport(s3_client, bucket_name, ic: IssuesCollector):
+def check_for_insecure_transport(client, bucket_name, ic: IssuesCollector):
     """Check that insecure transport is not allowed for the bucket."""
-    policy = get_bucket_policy(s3_client, bucket_name)
+    policy = get_bucket_policy(client, bucket_name)
     if not does_policy_disallow_insecure_transport(bucket_name, policy):
         ic.add(f"insecure transport allowed for S3 bucket {bucket_name}")
 
 
-def get_bucket_policy(s3_client, bucket_name) -> dict:
+def get_bucket_policy(client, bucket_name) -> dict:
     """Return bucket's policy or None if there is no policy."""
     try:
-        resp = s3_client.get_bucket_policy(Bucket=bucket_name)
+        resp = client.get_bucket_policy(Bucket=bucket_name)
         return json.loads(resp["Policy"])
     except botocore.exceptions.ClientError as e:
         if "NoSuchBucketPolicy" in str(e):

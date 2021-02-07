@@ -17,7 +17,7 @@
 
 import unittest
 
-from awsrev import s3_checks
+import awsrev.s3
 
 
 class SSERecommendedConfigTest(unittest.TestCase):
@@ -55,7 +55,7 @@ class SSERecommendedConfigTest(unittest.TestCase):
         for num, case in enumerate(cases):
             config, expected_result = case
             self.assertEqual(
-                s3_checks.is_recommended_sse_configuration(config),
+                awsrev.s3.is_recommended_sse_configuration(config),
                 expected_result,
                 msg=f"case {num}",
             )
@@ -63,8 +63,8 @@ class SSERecommendedConfigTest(unittest.TestCase):
 
 class InsecureTransportPolicyTests(unittest.TestCase):
     def test_no_policy(self):
-        self.assertFalse(s3_checks.does_policy_disallow_insecure_transport("foo", None))
-        self.assertFalse(s3_checks.does_policy_disallow_insecure_transport("foo", {}))
+        self.assertFalse(awsrev.s3.does_policy_disallow_insecure_transport("foo", None))
+        self.assertFalse(awsrev.s3.does_policy_disallow_insecure_transport("foo", {}))
 
     def test_correct_disallow_policy(self):
         policy = {
@@ -85,7 +85,7 @@ class InsecureTransportPolicyTests(unittest.TestCase):
             ],
         }
         self.assertTrue(
-            s3_checks.does_policy_disallow_insecure_transport("test-bucket-2", policy)
+            awsrev.s3.does_policy_disallow_insecure_transport("test-bucket-2", policy)
         )
 
     def test_misconfigured_disallow_policy(self):
@@ -107,5 +107,5 @@ class InsecureTransportPolicyTests(unittest.TestCase):
             ],
         }
         self.assertFalse(
-            s3_checks.does_policy_disallow_insecure_transport("test-bucket-2", policy)
+            awsrev.s3.does_policy_disallow_insecure_transport("test-bucket-2", policy)
         )

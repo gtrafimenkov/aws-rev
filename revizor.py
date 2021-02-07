@@ -24,8 +24,11 @@ import sys
 import boto3
 
 import awsrev
-import awsrev.kms
 import awsrev.iam
+import awsrev.kms
+import awsrev.regions
+import awsrev.results
+import awsrev.s3
 
 
 def main():
@@ -44,18 +47,17 @@ def main():
         format="%(asctime)s %(levelname)-10s %(message)s",
         level=logging.INFO if args.verbose else logging.WARNING,
     )
-    s3_client = boto3.client("s3")
     ec2_client = boto3.client("ec2")
-    regions = awsrev.get_enabled_regions(ec2_client)
+    regions = awsrev.regions.get_enabled_regions(ec2_client)
     if args.regions is not None:
         only_regions = [x.strip() for x in args.regions.split(",")]
         regions = sorted(list(set(regions) & set(only_regions)))
 
-    ic = awsrev.IssuesCollector()
+    ic = awsrev.results.IssuesCollector()
 
     awsrev.iam.check_iam(ic)
     awsrev.kms.check_cmk(regions, ic)
-    awsrev.check_s3_buckets(s3_client, ic)
+    awsrev.s3.check_buckets(ic)
 
     if ic.issues:
         print(f"Issues found: {len(ic.issues)}")

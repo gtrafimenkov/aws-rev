@@ -14,7 +14,3 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 ###############################################################################
-
-from awsrev.regions import get_enabled_regions
-from awsrev.results import IssuesCollector
-from awsrev.s3_checks import check_s3_buckets
