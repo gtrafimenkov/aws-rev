@@ -29,6 +29,13 @@ It is possible to limit checks to one or more regions:
 
 Global resources are always checked.
 
+It is also possible to limit checks to one or more groups,
+for example, S3 and IAM:
+
+```
+./revizor.py --groups s3,iam
+```
+
 The application doesn't create any AWS resources and uses
 only read-only API calls.  Minimal IAM policy can be found in
 [extras/terraform/ro-iam-policy/](./extras/terraform/ro-iam-policy/).
